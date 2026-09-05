@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phase B — Food Rescue Sorting Study</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="phase.css">
+</head>
+<body data-phase="B">
+  <main class="page page--test">
+
+    <!-- ---------- Back to home (leaves the test without recording a result) ---------- -->
+    <div class="page-nav">
+      <a class="btn btn--back" href="index.html" id="back-btn">&larr; Back</a>
+    </div>
+
+    <!-- ---------- Timer ---------- -->
+    <div class="timer-bar">
+      <span class="timer-label">Timer</span>
+      <span class="timer" id="timer">03:00</span>
+      <button class="btn btn--primary" id="start-btn" type="button">Start</button>
+    </div>
+
+    <p class="status-line" id="status">Press <strong>Start</strong> to begin the task.</p>
+
+    <!-- ---------- Sorting zones ---------- -->
+    <div class="zone-row">
+      <section class="drop-zone drop-zone--store">
+        <h2>Store <span class="zone-count" id="store-count">(0)</span></h2>
+        <div class="zone-items" id="zone-store"></div>
+      </section>
+
+      <section class="drop-zone drop-zone--discard">
+        <h2>Discard <span class="zone-count" id="discard-count">(0)</span></h2>
+        <div class="zone-items" id="zone-discard"></div>
+      </section>
+    </div>
+
+    <!-- ---------- Product cards (filled by phase-a.js) ---------- -->
+    <div class="tray" id="tray"></div>
+
+    <!-- ---------- Finish ---------- -->
+    <div class="test-actions">
+      <button class="btn btn--wide" id="end-btn" type="button" disabled>End the Timing</button>
+    </div>
+  </main>
+
+  <!-- ---------- Time-up dialog ---------- -->
+  <div class="overlay" id="fail-overlay" hidden>
+    <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="fail-title">
+      <h2 id="fail-title">Task Failed</h2>
+      <p>Time is up — the 3 minutes have run out before all cards were sorted.</p>
+      <div class="modal-summary" id="fail-summary"></div>
+      <div class="modal-actions">
+        <button class="btn btn--primary" id="fail-home" type="button">Back to Home</button>
+        <button class="btn" id="fail-retry" type="button">Try Again</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- Result dialog ---------- -->
+  <div class="overlay" id="result-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="result-title">
+      <h2 id="result-title">Phase B Complete</h2>
+      <p id="result-note">Your results have been recorded.</p>
+      <div class="modal-summary" id="result-summary"></div>
+      <div class="modal-actions">
+        <button class="btn btn--primary" id="result-home" type="button">Back to Home</button>
+      </div>
+      <p style="margin:14px 0 0;font-size:13px;color:#6b6b6b" id="result-countdown"></p>
+    </div>
+  </div>
+
+  <!-- ---------- Confirm-early-finish dialog ---------- -->
+  <div class="overlay" id="confirm-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+      <h2 id="confirm-title">Finish now?</h2>
+      <p id="confirm-text">Some cards have not been sorted yet.</p>
+      <div class="modal-actions">
+        <button class="btn btn--primary" id="confirm-yes" type="button">Yes, finish</button>
+        <button class="btn" id="confirm-no" type="button">Keep sorting</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+  <script src="phase-screen.js"></script>
+</body>
+</html>

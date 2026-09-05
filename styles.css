@@ -1,0 +1,238 @@
+/* ==========================================================
+   DECO6500 Group 32 — Food Rescue Sorting Study
+   Shared stylesheet (used by index.html and the phase pages)
+   ========================================================== */
+
+:root {
+  --bg: #d9d9d9;
+  --surface: #ffffff;
+  --surface-muted: #c9c9c9;
+  --ink: #1a1a1a;
+  --ink-soft: #3d3d3d;
+  --ink-faint: #6b6b6b;
+  --line: #b4b4b4;
+  --accent-a: #2f6f4f;
+  --accent-a-dark: #245840;
+  --accent-b: #2f4f7f;
+  --accent-b-dark: #243d63;
+  --radius: 10px;
+  --maxw: 760px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 40px 20px 64px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Segoe UI", "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.page {
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+
+/* ---------- Header ---------- */
+
+.page-title {
+  margin: 0 0 4px;
+  font-size: 30px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.page-subtitle {
+  margin: 0 0 28px;
+  color: var(--ink-faint);
+  font-size: 15px;
+}
+
+/* ---------- Instruction blocks ---------- */
+
+.instructions {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 24px 26px;
+  margin-bottom: 20px;
+}
+
+.instructions h2 {
+  margin: 0 0 12px;
+  font-size: 19px;
+}
+
+.instructions h3 {
+  margin: 22px 0 8px;
+  font-size: 16px;
+}
+
+.instructions p {
+  margin: 0 0 12px;
+  color: var(--ink-soft);
+}
+
+.instructions p:last-child,
+.instructions ul:last-child,
+.instructions ol:last-child {
+  margin-bottom: 0;
+}
+
+.instructions ul,
+.instructions ol {
+  margin: 0 0 12px;
+  padding-left: 22px;
+  color: var(--ink-soft);
+}
+
+.instructions li {
+  margin-bottom: 8px;
+}
+
+.instructions li:last-child {
+  margin-bottom: 0;
+}
+
+/* The two sorting destinations, described as a small definition list */
+.zones {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+  margin: 0 0 16px;
+}
+
+.zone {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  background: #f6f6f6;
+}
+
+.zone .zone-name {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+.zone p {
+  margin: 0;
+  font-size: 14.5px;
+}
+
+.note {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-left: 3px solid var(--ink-faint);
+  background: #f0f0f0;
+  border-radius: 0 8px 8px 0;
+  font-size: 14.5px;
+  color: var(--ink-soft);
+}
+
+kbd,
+.ui-label {
+  font-family: inherit;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* ---------- Phase buttons ---------- */
+
+.phase-choice {
+  display: grid;
+  gap: 18px;
+  margin-top: 32px;
+}
+
+.phase-btn {
+  display: block;
+  width: 100%;
+  padding: 30px 26px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-muted);
+  color: var(--ink);
+  font: inherit;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.phase-btn:hover,
+.phase-btn:focus-visible {
+  background: #bfbfbf;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
+  outline: none;
+}
+
+.phase-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.phase-btn .phase-name {
+  display: block;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.phase-btn .phase-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 14.5px;
+  color: var(--ink-soft);
+}
+
+.phase-btn--a:hover,
+.phase-btn--a:focus-visible {
+  border-color: var(--accent-a);
+}
+
+.phase-btn--b:hover,
+.phase-btn--b:focus-visible {
+  border-color: var(--accent-b);
+}
+
+.page-footer {
+  margin-top: 36px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 560px) {
+  body {
+    padding: 24px 14px 48px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .instructions {
+    padding: 18px;
+  }
+
+  .zones {
+    grid-template-columns: 1fr;
+  }
+
+  .phase-btn {
+    padding: 24px 18px;
+  }
+
+  .phase-btn .phase-name {
+    font-size: 24px;
+  }
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Food Rescue Sorting Study — DECO6500 Group 32</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="phase.css">
+</head>
+<body>
+  <main class="page">
+    <h1 class="page-title">Food Rescue Sorting Study</h1>
+    <p class="page-subtitle">Please read the instructions below, then choose a phase to begin.</p>
+
+    <section class="instructions">
+      <h2>Task Instructions</h2>
+      <p>You will be shown a series of food cards. Sort each card into <strong>one</strong> of the two areas below.</p>
+
+      <div class="zones">
+        <div class="zone">
+          <span class="zone-name">Store / Food Rescue</span>
+          <p>Choose this area if you believe the item can still go to food rescue or be processed further.</p>
+        </div>
+        <div class="zone">
+          <span class="zone-name">Disposal</span>
+          <p>Choose this area if you believe the item is not suitable for food rescue and should be thrown away.</p>
+        </div>
+      </div>
+
+      <ul>
+        <li>You have <strong>3 minutes</strong> to sort all of the cards.</li>
+        <li>You may change a decision at any time before you click <span class="ui-label">End the Timing</span>.</li>
+        <li>To change a card you have already sorted, click that card — it will return to the sorting flow.</li>
+        <li>When you have finished all of the cards, click <span class="ui-label">End the Timing</span>.</li>
+      </ul>
+
+      <h3>Additional notes for Phase B</h3>
+      <ul>
+        <li>In Phase B the system provides a <strong>suggested classification</strong> for every card.</li>
+        <li>If you agree with the suggestion, click <span class="ui-label">Confirm</span>.</li>
+        <li>If you think the suggestion is wrong, or you notice another problem, click <span class="ui-label">Change</span> and write your feedback.</li>
+      </ul>
+      <p class="note">After you submit feedback, the card is moved to the <span class="ui-label">Disposal</span> area, and the decision is recorded as a change you made based on your own judgement.</p>
+    </section>
+
+    <nav class="phase-choice" aria-label="Choose a phase">
+      <a class="phase-btn phase-btn--a" href="phase-a.html">
+        <span class="phase-name">Phase A</span>
+        <span class="phase-hint">Sort the cards using the label information only.</span>
+      </a>
+
+      <a class="phase-btn phase-btn--b" href="phase-b.html">
+        <span class="phase-name">Phase B</span>
+        <span class="phase-hint">Sort the cards with an assistive suggestion card.</span>
+      </a>
+    </nav>
+
+    <div class="log-actions">
+      <button class="btn" id="history-btn" type="button">Test History</button>
+      <button class="btn" id="log-btn" type="button">Change Log</button>
+    </div>
+
+    <p class="page-footer">DECO6500 Group 32 — A/B comparison test</p>
+  </main>
+
+  <!-- ---------- Test history ---------- -->
+  <div class="overlay" id="history-overlay" hidden>
+    <div class="modal modal--table" role="dialog" aria-modal="true" aria-labelledby="history-title">
+      <h2 id="history-title">Test History</h2>
+      <p>Every completed run, newest first.</p>
+      <div class="table-scroll" id="history-body"></div>
+      <div class="modal-actions">
+        <button class="btn btn--primary" id="history-close" type="button">Close</button>
+        <button class="btn" id="history-clear" type="button">Clear history</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- Change log ---------- -->
+  <div class="overlay" id="log-overlay" hidden>
+    <div class="modal modal--wide" role="dialog" aria-modal="true" aria-labelledby="log-title">
+      <h2 id="log-title">Change Log</h2>
+      <p>Every time a participant changed the app's suggestion in Phase B.</p>
+      <div class="log-list" id="log-list"></div>
+      <div class="modal-actions">
+        <button class="btn btn--primary" id="log-close" type="button">Close</button>
+        <button class="btn" id="log-clear" type="button">Clear log</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+  <script src="home.js"></script>
+</body>
+</html>

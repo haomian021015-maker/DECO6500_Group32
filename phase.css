@@ -1,0 +1,838 @@
+/* ==========================================================
+   DECO6500 Group 32 — Food Rescue Sorting Study
+   Layout shared by the Phase A / Phase B test screens.
+   Depends on the design tokens declared in styles.css.
+   ========================================================== */
+
+:root {
+  --zone-store: #e2f4e8;
+  --zone-store-line: #9ec9ae;
+  --zone-discard: #f8f6cf;
+  --zone-discard-line: #cfc98a;
+  --slot: #e0ecf8;
+  --slot-line: #b6cde4;
+}
+
+.page--test {
+  max-width: 900px;
+}
+
+/* ---------- Timer bar ---------- */
+
+.timer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.timer {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer--running {
+  color: var(--accent-a-dark);
+}
+
+.timer--warning {
+  color: #a3341f;
+}
+
+.timer-label {
+  font-size: 15px;
+  color: var(--ink-faint);
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  padding: 10px 22px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s ease, box-shadow 0.12s ease, transform 0.12s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: #f0f0f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: var(--accent-a);
+  border-color: var(--accent-a-dark);
+  color: #fff;
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: var(--accent-a-dark);
+}
+
+.btn--store {
+  background: var(--zone-store);
+  border-color: var(--zone-store-line);
+}
+
+.btn--discard {
+  background: var(--zone-discard);
+  border-color: var(--zone-discard-line);
+}
+
+.btn--wide {
+  min-width: 260px;
+  padding: 16px 28px;
+  font-size: 18px;
+}
+
+/* ---------- Sorting zones ---------- */
+
+.zone-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 26px;
+}
+
+.drop-zone {
+  min-height: 300px;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.drop-zone--store {
+  background: var(--zone-store);
+  border: 1px solid var(--zone-store-line);
+}
+
+.drop-zone--discard {
+  background: var(--zone-discard);
+  border: 1px solid var(--zone-discard-line);
+}
+
+.drop-zone h2 {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 20px;
+}
+
+.drop-zone .zone-count {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ink-faint);
+}
+
+.zone-items {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  grid-auto-rows: 76px;
+  gap: 10px;
+  align-content: start;
+}
+
+/* ---------- Card tray ---------- */
+
+.tray {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.slot {
+  aspect-ratio: 1 / 1;
+  background: var(--slot);
+  border: 1px solid var(--slot-line);
+  border-radius: 18px;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot--empty {
+  background: #e8eff6;
+  border-style: dashed;
+}
+
+/* ---------- Product cards ---------- */
+
+.card {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+.card:hover:not(:disabled),
+.card:focus-visible:not(:disabled) {
+  transform: scale(1.05);
+  outline: none;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.22));
+}
+
+.card:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Shown until a real product photo is dropped into the slot */
+.card .card-placeholder {
+  font-size: 12px;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--ink-faint);
+  padding: 4px;
+}
+
+/* Cards sitting inside a sorting zone are rendered smaller */
+.zone-items .card {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.zone-empty-hint {
+  margin: auto;
+  color: var(--ink-faint);
+  font-size: 14px;
+}
+
+/* ---------- Footer action ---------- */
+
+.test-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.status-line {
+  margin: 0 0 20px;
+  text-align: center;
+  font-size: 14.5px;
+  color: var(--ink-faint);
+  min-height: 1.4em;
+}
+
+/* ---------- Modal ---------- */
+
+.overlay[hidden] {
+  display: none !important;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+}
+
+.modal {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 26px 28px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.modal h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+}
+
+.modal p {
+  margin: 0 0 18px;
+  color: var(--ink-soft);
+}
+
+.modal-figure {
+  width: 190px;
+  height: 190px;
+  margin: 0 auto 18px;
+  background: var(--slot);
+  border: 1px solid var(--slot-line);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.modal-figure img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.modal-summary {
+  text-align: left;
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  background: #f4f4f4;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.modal-summary div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 3px 0;
+}
+
+.modal-summary span:last-child {
+  font-weight: 700;
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 620px) {
+  .tray {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .zone-row {
+    grid-template-columns: 1fr;
+  }
+
+  .drop-zone {
+    min-height: 200px;
+  }
+
+  .timer-bar {
+    flex-wrap: wrap;
+  }
+}
+
+/* ---------- Back to home ---------- */
+
+.page-nav {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.btn--back {
+  padding: 7px 16px;
+  font-size: 14.5px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--ink-soft);
+  display: inline-block;
+}
+
+.btn--back:hover {
+  color: var(--ink);
+}
+
+/* ==========================================================
+   Product screen (product.html)
+   ========================================================== */
+
+.page--product {
+  max-width: 720px;
+}
+
+.product-intro {
+  margin: 0 0 18px;
+  color: #6b5cd6;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.scenario-card {
+  background: var(--slot);
+  border: 1px solid var(--slot-line);
+  border-radius: 20px;
+  padding: 24px 24px 28px;
+  text-align: center;
+}
+
+.scenario-title {
+  margin: 0 0 6px;
+  font-size: 23px;
+}
+
+.scenario-date {
+  margin: 0 0 20px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ---------- Main photo with its four close-up buttons ---------- */
+
+.product-figure {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto 24px;
+}
+
+.product-photo {
+  display: block;
+  width: 100%;
+  border-radius: 12px;
+}
+
+.hotspot {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #2f6fd0;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.32);
+  transform: translate(-50%, -50%);
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.hotspot:hover,
+.hotspot:focus-visible {
+  background: #24559f;
+  transform: translate(-50%, -50%) scale(1.16);
+  outline: none;
+}
+
+/* The circles sit around the photo — their positions are decorative and do not
+   have to match the part of the product each close-up shows. */
+.hotspot--1 { top: 7%;  left: 50%; }
+.hotspot--2 { top: 38%; left: 89%; }
+.hotspot--3 { top: 52%; left: 11%; }
+.hotspot--4 { top: 79%; left: 85%; }
+
+/* ---------- Decision buttons ---------- */
+
+.decision-actions {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+}
+
+.btn--decision {
+  min-width: 132px;
+  padding: 14px 24px;
+  font-size: 17px;
+}
+
+.decision-current {
+  margin: 16px 0 0;
+  font-size: 14px;
+  color: var(--ink-faint);
+}
+
+/* ---------- Close-up viewer ---------- */
+
+.overlay--detail {
+  background: rgba(0, 0, 0, 0.72);
+  overflow: auto;
+}
+
+.detail-photo {
+  max-width: 92vw;
+  max-height: 82vh;
+  border-radius: 10px;
+  background: #fff;
+  cursor: zoom-in;
+}
+
+/* A second click magnifies the photo; the overlay then scrolls. */
+.detail-photo.zoomed {
+  max-width: none;
+  max-height: none;
+  width: 170vw;
+  border-radius: 0;
+  cursor: zoom-out;
+}
+
+.detail-close {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 60;
+}
+
+.detail-close:hover {
+  background: #fff;
+}
+
+body.no-scroll {
+  overflow: hidden;
+}
+
+/* ==========================================================
+   Phase B — the app's product card
+   ========================================================== */
+
+.scenario-card--b {
+  text-align: left;
+}
+
+.scenario-card--b .scenario-title {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.app-heading {
+  margin: 0 0 12px;
+  font-size: 19px;
+}
+
+.app-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px;
+  gap: 16px;
+  align-items: start;
+}
+
+/* The phone-screenshot panel */
+.app-card {
+  background: #d4d4d4;
+  border: 1px solid #b9b9b9;
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.app-photo {
+  height: 210px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.app-photo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.app-info {
+  margin: 0 0 14px;
+  font-size: 14.5px;
+}
+
+.app-info div {
+  display: flex;
+  gap: 6px;
+  padding: 1px 0;
+}
+
+.app-info dt {
+  font-weight: 600;
+}
+
+.app-info dd {
+  margin: 0;
+}
+
+.app-suggestion {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.app-suggestion strong {
+  font-size: 19px;
+}
+
+.app-suggestion-note {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #7a4a12;
+}
+
+.app-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.btn--dark {
+  background: #1f1f1f;
+  border-color: #1f1f1f;
+  color: #fff;
+  min-width: 108px;
+}
+
+.btn--dark:hover:not(:disabled) {
+  background: #383838;
+  color: #fff;
+}
+
+/* The four close-ups beside the card */
+.app-thumbs {
+  display: grid;
+  gap: 12px;
+}
+
+.app-thumb {
+  height: 104px;
+  padding: 0;
+  border: 1px solid #c4c4c4;
+  border-radius: 6px;
+  background: #d8d8d8;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.app-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.app-thumb:hover,
+.app-thumb:focus-visible {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.24);
+  outline: none;
+}
+
+/* ---------- Feedback dialog ---------- */
+
+.feedback-modal {
+  max-width: 380px;
+  text-align: left;
+  background: #d4d4d4;
+  padding: 20px;
+}
+
+.feedback-back {
+  border: 0;
+  background: none;
+  padding: 0 0 14px;
+  font: inherit;
+  font-weight: 600;
+  color: #6f6f6f;
+  cursor: pointer;
+}
+
+.feedback-back:hover {
+  color: var(--ink);
+}
+
+.feedback-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.feedback-modal textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #b9b9b9;
+  border-radius: 4px;
+  background: #fff;
+  font: inherit;
+  resize: vertical;
+}
+
+.feedback-modal textarea.needs-text {
+  border-color: #a3341f;
+}
+
+.feedback-hint {
+  margin: 12px 0 18px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+/* ---------- Change log on the home page ---------- */
+
+.log-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 26px;
+}
+
+.modal--wide {
+  max-width: 560px;
+  text-align: left;
+}
+
+.modal--wide h2,
+.modal--wide > p {
+  text-align: center;
+}
+
+.log-list {
+  max-height: 46vh;
+  overflow-y: auto;
+  margin-bottom: 18px;
+}
+
+.log-item {
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  background: #f4f4f4;
+  border-left: 3px solid var(--accent-b);
+  border-radius: 0 8px 8px 0;
+}
+
+.log-item-head {
+  font-weight: 700;
+}
+
+.log-item-meta {
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--ink-faint);
+}
+
+.log-item-reason {
+  margin: 8px 0 0;
+  font-size: 14.5px;
+  color: var(--ink-soft);
+  white-space: pre-wrap;
+}
+
+.log-empty {
+  margin: 0;
+  padding: 18px;
+  text-align: center;
+  color: var(--ink-faint);
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 620px) {
+  .app-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .app-thumbs {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .app-thumb {
+    height: 80px;
+  }
+}
+
+/* ---------- Test history table ---------- */
+
+.log-actions {
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.modal--table {
+  max-width: min(94vw, 940px);
+  text-align: left;
+}
+
+.modal--table h2,
+.modal--table > p {
+  text-align: center;
+}
+
+.table-scroll {
+  max-height: 52vh;
+  overflow: auto;
+  margin-bottom: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.history-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13.5px;
+  white-space: nowrap;
+}
+
+.history-table th {
+  position: sticky;
+  top: 0;
+  background: #1f6b73;
+  color: #fff;
+  font-weight: 700;
+  text-align: left;
+  padding: 9px 12px;
+}
+
+.history-table td {
+  padding: 8px 12px;
+  border-top: 1px solid #e2e2e2;
+}
+
+.history-table tr:nth-child(even) td {
+  background: #f7f7f7;
+}
+
+.history-row--timeout td {
+  color: #a3341f;
+}

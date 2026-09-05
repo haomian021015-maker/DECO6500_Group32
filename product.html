@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scenario Card — Food Rescue Sorting Study</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="phase.css">
+</head>
+<body>
+  <main class="page page--product">
+
+    <!-- ---------- Back to the phase screen (no decision recorded) ---------- -->
+    <div class="page-nav">
+      <a class="btn btn--back" href="phase-a.html" id="back-btn">&larr; Back</a>
+    </div>
+
+    <!-- ================= Phase A: photo with close-up circles ================= -->
+    <div id="view-a" hidden>
+      <p class="product-intro">
+        These buttons you can press.<br>
+        Please follow our instructions to decide whether to store or discard.
+      </p>
+
+      <section class="scenario-card">
+        <h1 class="scenario-title" id="card-title-a">Scenario Card</h1>
+        <p class="scenario-date">today: <span class="today-date"></span></p>
+
+        <div class="product-figure" id="product-figure">
+          <img class="product-photo" id="main-photo-a" alt="">
+          <button class="hotspot hotspot--1" type="button" data-detail="0" aria-label="Show close-up 1"><span>1</span></button>
+          <button class="hotspot hotspot--2" type="button" data-detail="1" aria-label="Show close-up 2"><span>2</span></button>
+          <button class="hotspot hotspot--3" type="button" data-detail="2" aria-label="Show close-up 3"><span>3</span></button>
+          <button class="hotspot hotspot--4" type="button" data-detail="3" aria-label="Show close-up 4"><span>4</span></button>
+        </div>
+
+        <div class="decision-actions">
+          <button class="btn btn--store btn--decision" id="store-btn" type="button">Store</button>
+          <button class="btn btn--discard btn--decision" id="discard-btn" type="button">Discard</button>
+        </div>
+
+        <p class="decision-current" id="current-decision-a"></p>
+      </section>
+    </div>
+
+    <!-- ================= Phase B: the app's product card ================= -->
+    <div id="view-b" hidden>
+      <section class="scenario-card scenario-card--b">
+        <h1 class="scenario-title" id="card-title-b">Scenario Card</h1>
+        <h2 class="app-heading">Official photo of the app</h2>
+
+        <div class="app-layout">
+          <!-- the app screenshot -->
+          <div class="app-card">
+            <div class="app-photo">
+              <img id="main-photo-b" alt="">
+            </div>
+
+            <dl class="app-info">
+              <div><dt>Product name:</dt><dd id="info-name"></dd></div>
+              <div><dt>Shelf category:</dt><dd id="info-shelf"></dd></div>
+              <div><dt>Before/used:</dt><dd id="info-label-date"></dd></div>
+              <div><dt>Today's date:</dt><dd class="today-date"></dd></div>
+            </dl>
+
+            <p class="app-suggestion">
+              Suggested classification:<br>
+              <strong id="suggestion-value">Store</strong>
+            </p>
+            <p class="app-suggestion-note" id="suggestion-note" hidden>
+              Changed from your feedback.
+            </p>
+
+            <div class="app-actions">
+              <button class="btn btn--dark" id="accept-btn" type="button">Accept</button>
+              <button class="btn btn--dark" id="change-btn" type="button">Change</button>
+            </div>
+          </div>
+
+          <!-- the four close-up photos -->
+          <div class="app-thumbs" id="app-thumbs"></div>
+        </div>
+
+        <p class="decision-current" id="current-decision-b"></p>
+      </section>
+    </div>
+  </main>
+
+  <!-- ---------- Close-up viewer ---------- -->
+  <div class="overlay overlay--detail" id="detail-overlay" hidden>
+    <button class="detail-close" id="detail-close" type="button" aria-label="Close">&times;</button>
+    <img class="detail-photo" id="detail-photo" alt="">
+  </div>
+
+  <!-- ---------- Feedback, shown by Change ---------- -->
+  <div class="overlay" id="feedback-overlay" hidden>
+    <div class="modal feedback-modal" role="dialog" aria-modal="true" aria-labelledby="feedback-label">
+      <button class="feedback-back" id="feedback-back" type="button">Back</button>
+
+      <label class="feedback-label" id="feedback-label" for="feedback-text">
+        Why should this item be classified differently?
+      </label>
+      <textarea id="feedback-text" rows="5" placeholder="typing..."></textarea>
+      <p class="feedback-hint" id="feedback-hint">
+        The suggestion will change to <strong id="feedback-target">Store</strong>.
+      </p>
+
+      <button class="btn btn--dark btn--wide" id="feedback-submit" type="button">Change</button>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+  <script src="product.js"></script>
+</body>
+</html>
