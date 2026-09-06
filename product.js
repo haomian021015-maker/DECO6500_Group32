@@ -3,7 +3,7 @@
    One product screen.
 
    Phase A — the photo with four close-up circles around it and
-             a straight Store / Discard choice.
+             a straight Food Rescue / Discard choice.
    Phase B — the same photo shown inside the app's product card,
              which also carries the product details and a
              suggested classification. The participant either
@@ -36,6 +36,7 @@ const el = {
   mainPhotoB: document.getElementById("main-photo-b"),
   infoName: document.getElementById("info-name"),
   infoShelf: document.getElementById("info-shelf"),
+  infoLabelType: document.getElementById("info-label-type"),
   infoLabelDate: document.getElementById("info-label-date"),
   suggestionValue: document.getElementById("suggestion-value"),
   suggestionNote: document.getElementById("suggestion-note"),
@@ -65,7 +66,23 @@ const productId = params.get("id");
 const product = getProduct(PHASE, productId);
 const state = Session.load();
 
+// Read the latest state so leaving never overwrites a decision or feedback.
+function stopCardVisit() {
+  const current = Session.load();
+  if (!current || !state || current.phase !== PHASE || current.startedAt !== state.startedAt) return;
+  if (!current.activeCard || current.activeCard.productId !== productId) return;
+  CardTiming.stop(current);
+  Session.save(current);
+}
+
+window.addEventListener("pagehide", stopCardVisit);
+window.addEventListener("pageshow", function (event) {
+  // Rebuild from storage when browser Back restores an old product page.
+  if (event.persisted) window.location.reload();
+});
+
 function backToPhase() {
+  stopCardVisit();
   window.location.href = PHASE_PAGE;
 }
 
@@ -77,6 +94,8 @@ if (!product || !Session.isRunning(state) || state.phase !== PHASE) {
   window.location.replace(PHASE_PAGE);
 } else {
   buildScreen();
+  CardTiming.start(state, productId);
+  Session.save(state);
 }
 
 /* ----------------------------------------------------------
@@ -94,7 +113,7 @@ function buildScreen() {
   el.backBtn.setAttribute("href", PHASE_PAGE);
 
   Array.prototype.forEach.call(el.todayDates, function (node) {
-    node.textContent = TODAY_DATE;
+    node.textContent = product.todayDate;
   });
 
   const decision = state.decisions[productId];
@@ -122,9 +141,13 @@ function buildScreen() {
     el.cardTitleB.textContent = product.name;
     el.mainPhotoB.src = product.image;
     el.mainPhotoB.alt = product.name;
-    el.infoName.textContent = CARD_INFO.productName;
-    el.infoShelf.textContent = CARD_INFO.shelfCategory;
-    el.infoLabelDate.textContent = CARD_INFO.labelDate;
+    el.infoName.textContent = product.productName;
+    el.infoShelf.textContent = product.shelfCategory;
+    const labelClass = product.labelType === "use by" ? "label-used-by" : "label-best-before";
+    el.infoLabelType.textContent = product.labelType === "use by" ? "Use By:" : "Best Before:";
+    el.infoLabelType.className = labelClass;
+    el.infoLabelDate.textContent = product.labelDate;
+    el.infoLabelDate.className = labelClass;
     el.currentDecisionB.textContent = decisionNote;
 
     buildThumbs();
@@ -163,6 +186,7 @@ function buildThumbs() {
 function paintSuggestion() {
   const suggestion = currentSuggestion();
   el.suggestionValue.textContent = zoneName(suggestion);
+  el.suggestionValue.className = suggestion === "store" ? "suggestion-store" : "suggestion-discard";
   el.suggestionNote.hidden = !state.suggestions[productId];
 }
 
@@ -215,7 +239,10 @@ function otherChoice(choice) {
 }
 
 function openFeedback() {
-  el.feedbackTarget.textContent = zoneName(otherChoice(currentSuggestion()));
+  const target = otherChoice(currentSuggestion());
+  el.feedbackTarget.textContent = zoneName(target);
+  el.feedbackTarget.className = target === "store" ? "suggestion-store" : "suggestion-discard";
+  el.feedbackSubmit.textContent = "Change to " + zoneName(target);
   el.feedbackText.value = "";
   el.feedbackOverlay.hidden = false;
   document.body.classList.add("no-scroll");
@@ -227,8 +254,9 @@ function closeFeedback() {
   document.body.classList.remove("no-scroll");
 }
 
-// Submitting the reason flips the suggestion on the card and writes the change
-// to the log. The classification itself still waits for Accept.
+// Submitting the reason writes the change to the log and immediately sorts
+// the card into the classification the participant chose. The app's own
+// suggestion is never overwritten — it always shows what the app suggested.
 function submitFeedback() {
   const reason = el.feedbackText.value.trim();
   if (!reason) {
@@ -244,12 +272,12 @@ function submitFeedback() {
     return;
   }
 
-  const from = current.suggestions[productId] || suggestionFor(product);
+  const from = suggestionFor(product);
   const to = otherChoice(from);
 
-  current.suggestions[productId] = to;
   const entry = {
     phase: PHASE,
+    participantId: current.participantId || "",
     productId: productId,
     cardNumber: product.cardNumber,
     labelType: product.labelType,
@@ -260,17 +288,17 @@ function submitFeedback() {
     atSecond: TIMER_SECONDS - Session.remaining(current),
     at: new Date().toISOString()
   };
+  recordCardChange(current, Object.assign({}, entry, { kind: "suggestion" }));
   current.feedback.push(entry);
   Session.save(current);
 
   // Kept outside the run as well, so the home page can show it afterwards.
   ChangeLog.add(entry);
 
-  state.suggestions[productId] = to;
   state.feedback.push(entry);
 
   closeFeedback();
-  paintSuggestion();
+  decide(to, "changed");
 }
 
 el.feedbackBack.addEventListener("click", closeFeedback);
@@ -291,6 +319,15 @@ function decide(choice, how) {
   }
 
   const previous = current.decisions[productId] || null;
+  recordCardChange(current, {
+    kind: "decision",
+    productId: productId,
+    cardNumber: product.cardNumber,
+    from: previous,
+    to: choice,
+    atSecond: TIMER_SECONDS - Session.remaining(current),
+    at: new Date().toISOString()
+  });
   current.decisions[productId] = choice;
   current.log.push({
     productId: productId,
@@ -301,6 +338,7 @@ function decide(choice, how) {
     atSecond: TIMER_SECONDS - Session.remaining(current)
   });
 
+  CardTiming.stop(current);
   Session.save(current);
   backToPhase();
 }

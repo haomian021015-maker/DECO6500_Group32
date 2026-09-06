@@ -23,11 +23,12 @@
     </div>
 
     <p class="status-line" id="status">Press <strong>Start</strong> to begin the task.</p>
+    <p class="overtime-banner" id="overtime-banner" hidden>&#9200; Time's up &mdash; please finish sorting as soon as possible.</p>
 
     <!-- ---------- Sorting zones ---------- -->
     <div class="zone-row">
       <section class="drop-zone drop-zone--store">
-        <h2>Store <span class="zone-count" id="store-count">(0)</span></h2>
+        <h2>Food Rescue <span class="zone-count" id="store-count">(0)</span></h2>
         <div class="zone-items" id="zone-store"></div>
       </section>
 
@@ -45,19 +46,6 @@
       <button class="btn btn--wide" id="end-btn" type="button" disabled>End the Timing</button>
     </div>
   </main>
-
-  <!-- ---------- Time-up dialog ---------- -->
-  <div class="overlay" id="fail-overlay" hidden>
-    <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="fail-title">
-      <h2 id="fail-title">Task Failed</h2>
-      <p>Time is up — the 3 minutes have run out before all cards were sorted.</p>
-      <div class="modal-summary" id="fail-summary"></div>
-      <div class="modal-actions">
-        <button class="btn btn--primary" id="fail-home" type="button">Back to Home</button>
-        <button class="btn" id="fail-retry" type="button">Try Again</button>
-      </div>
-    </div>
-  </div>
 
   <!-- ---------- Result dialog ---------- -->
   <div class="overlay" id="result-overlay" hidden>

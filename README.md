@@ -22,11 +22,11 @@ storage.
 1. From the home page, choose **Phase A** or **Phase B**.
 2. Press **Start** to begin the 3-minute countdown.
 3. Click a card to open that product.
-   - Phase A: four numbered circles show close-up photos; choose **Store** or **Discard**.
+   - Phase A: four numbered circles show close-up photos; choose **Food Rescue** or **Discard**.
    - Phase B: the app card shows the product details and a suggested
      classification. **Accept** follows the suggestion; **Change** asks for a
      written reason and then flips the suggestion.
-4. A sorted card moves into the Store or Discard zone. Clicking it there opens
+4. A sorted card moves into the Food Rescue or Discard zone. Clicking it there opens
    the product again so the decision can be changed.
 5. **End the Timing** finishes the run and shows the summary. If the countdown
    runs out first, the run ends as a failure and is still recorded.
@@ -43,7 +43,7 @@ A card is correct when it matches this rule:
 | Label | Food state | Correct choice |
 | --- | --- | --- |
 | use by | any | Discard |
-| best before | intact | Store |
+| best before | intact | Food Rescue |
 | best before | damaged | Discard |
 
 Phase B's suggestion uses the same rule, so the app is always "right" and the

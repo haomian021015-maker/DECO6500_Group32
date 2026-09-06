@@ -7,26 +7,53 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="phase.css">
 </head>
-<body>
+<body class="page-home">
   <main class="page">
     <h1 class="page-title">Food Rescue Sorting Study</h1>
     <p class="page-subtitle">Please read the instructions below, then choose a phase to begin.</p>
+
+    <section class="study-documents" aria-label="Participant documents">
+      <div class="study-document">
+        <h2>Participant Information Sheet</h2>
+        <p id="information-confirmation-text">I confirm that I have read and understood the Participant Information Sheet.</p>
+        <button class="btn btn--primary" id="information-confirm-btn" type="button" aria-describedby="information-confirmation-text" aria-pressed="false">I have read and understood</button>
+      </div>
+      <div class="study-document">
+        <h2>Consent Form</h2>
+        <p id="consent-confirmation-text">I confirm that I have signed the Consent Form.</p>
+        <button class="btn btn--primary" id="consent-confirm-btn" type="button" aria-describedby="consent-confirmation-text" aria-pressed="false">I have signed the Consent Form</button>
+      </div>
+    </section>
+
+    <div id="study-next-steps" hidden>
+    <section class="instructions participant-entry" aria-labelledby="participant-title">
+      <h2 id="participant-title">Participant ID</h2>
+      <label for="participant-id">Please enter the participant ID provided by the research staff.</label>
+      <p class="participant-note">*If we have not provided you with a participant ID, please enter a nickname or code name of your choice. This information will not be recorded.</p>
+      <input id="participant-id" type="text" required maxlength="100" autocomplete="off" spellcheck="false" aria-describedby="participant-status">
+      <p id="participant-status" role="status">Your ID will be recorded with each test and shown in Test History.</p>
+    </section>
 
     <section class="instructions">
       <h2>Task Instructions</h2>
       <p>You will be shown a series of food cards. Sort each card into <strong>one</strong> of the two areas below.</p>
 
+      <h3>Understanding the scenario and “Today”</h3>
+      <p>When you open a Scenario Card, you will see a date labelled <strong>“Today”</strong>. This is the simulated date on which you are assessing the food, and the day it is due to be removed from sale. Use this date together with the clues provided to decide whether the food can still be rescued or should be sent for non-food recycling.</p>
+
+      <h3>What do the Food Rescue and Discard buttons do?</h3>
       <div class="zones">
         <div class="zone">
-          <span class="zone-name">Store / Food Rescue</span>
-          <p>Choose this area if you believe the item can still go to food rescue or be processed further.</p>
+          <span class="zone-name">Food Rescue</span>
+          <p>Click <span class="ui-label">Food Rescue</span> to move the card to the <span class="ui-label">Food Rescue</span> area. Choose this option if you believe the food is still suitable for human consumption and can be donated to a food rescue organisation.</p>
         </div>
         <div class="zone">
-          <span class="zone-name">Disposal</span>
-          <p>Choose this area if you believe the item is not suitable for food rescue and should be thrown away.</p>
+          <span class="zone-name">Discard — Non-food Recycling</span>
+          <p>Click <span class="ui-label">Discard</span> to move the card to the <span class="ui-label">Disposal</span> area. Choose this option if you believe the food is no longer suitable for human consumption and should be sent to an organisation that recycles it for non-food uses.</p>
         </div>
       </div>
 
+      <h3>Timing and changing your decisions</h3>
       <ul>
         <li>You have <strong>3 minutes</strong> to sort all of the cards.</li>
         <li>You may change a decision at any time before you click <span class="ui-label">End the Timing</span>.</li>
@@ -38,27 +65,36 @@
       <ul>
         <li>In Phase B the system provides a <strong>suggested classification</strong> for every card.</li>
         <li>If you agree with the suggestion, click <span class="ui-label">Confirm</span>.</li>
-        <li>If you think the suggestion is wrong, or you notice another problem, click <span class="ui-label">Change</span> and write your feedback.</li>
+        <li class="feedback-instruction">If you think the suggestion is wrong, or you notice another problem, click <span class="ui-label">Change</span> and write your feedback.</li>
       </ul>
       <p class="note">After you submit feedback, the card is moved to the <span class="ui-label">Disposal</span> area, and the decision is recorded as a change you made based on your own judgement.</p>
+      <div class="instructions-acknowledgement">
+        <p id="acknowledgement-text">I confirm that I understand the research background and assumptions explained by the facilitator, and that I have read and understood the Task Instructions.</p>
+        <button class="btn btn--primary" id="acknowledge-btn" type="button" aria-describedby="acknowledgement-text">I understand — enable Phase A and Phase B</button>
+        <p class="acknowledgement-status" id="acknowledgement-status" role="status">Please confirm your understanding before choosing a phase.</p>
+      </div>
     </section>
 
     <nav class="phase-choice" aria-label="Choose a phase">
-      <a class="phase-btn phase-btn--a" href="phase-a.html">
+      <a class="phase-btn phase-btn--a" data-phase-href="phase-a.html" data-phase="A" role="link" aria-disabled="true" tabindex="-1">
         <span class="phase-name">Phase A</span>
-        <span class="phase-hint">Sort the cards using the label information only.</span>
+        <span class="phase-hint" data-default-hint="Sort the cards using the label information only.">Sort the cards using the label information only.</span>
       </a>
 
-      <a class="phase-btn phase-btn--b" href="phase-b.html">
+      <a class="phase-btn phase-btn--b" data-phase-href="phase-b.html" data-phase="B" role="link" aria-disabled="true" tabindex="-1">
         <span class="phase-name">Phase B</span>
-        <span class="phase-hint">Sort the cards with an assistive suggestion card.</span>
+        <span class="phase-hint" data-default-hint="Sort the cards with an assistive suggestion card.">Sort the cards with an assistive suggestion card.</span>
       </a>
     </nav>
+    </div>
 
     <div class="log-actions">
       <button class="btn" id="history-btn" type="button">Test History</button>
       <button class="btn" id="log-btn" type="button">Change Log</button>
+      <button class="btn" id="export-btn" type="button" disabled>Download Reports (CSV)</button>
+      <button class="btn btn--danger" id="reset-btn" type="button">Reset for Next Participant</button>
     </div>
+    <p class="export-status" id="export-status" role="status">Complete Phase A and Phase B to enable the download.</p>
 
     <p class="page-footer">DECO6500 Group 32 — A/B comparison test</p>
   </main>
@@ -68,10 +104,11 @@
     <div class="modal modal--table" role="dialog" aria-modal="true" aria-labelledby="history-title">
       <h2 id="history-title">Test History</h2>
       <p>Every completed run, newest first.</p>
+      <p>Selection history records every action in order, including the first classification, changed answers and repeated choices such as Food Rescue → Food Rescue. Each entry shows the card, action number, and previous and selected answers. Action counts include repeated choices; changed-answer counts include only switches between Food Rescue and Discard. Phase B suggestion changes are labelled separately.</p>
+      <p>Card visits are listed in the order opened, with each visit timed separately in seconds. “Card 1 (2)” means the second visit to Card 1. Times include close-ups and feedback, but exclude time on the sorting screen. Older records show totals only; “—” means no visits were recorded or timing data is unavailable.</p>
       <div class="table-scroll" id="history-body"></div>
       <div class="modal-actions">
         <button class="btn btn--primary" id="history-close" type="button">Close</button>
-        <button class="btn" id="history-clear" type="button">Clear history</button>
       </div>
     </div>
   </div>
@@ -84,7 +121,21 @@
       <div class="log-list" id="log-list"></div>
       <div class="modal-actions">
         <button class="btn btn--primary" id="log-close" type="button">Close</button>
-        <button class="btn" id="log-clear" type="button">Clear log</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- Reset for next participant ---------- -->
+  <div class="overlay" id="reset-overlay" hidden>
+    <div class="modal modal--reset" role="alertdialog" aria-modal="true" aria-labelledby="reset-title">
+      <h2 id="reset-title">Reset for Next Participant</h2>
+      <p>This clears the Participant ID, the three confirmations above, Phase A/B completion, Test History and Change Log on this device. The next participant starts from a completely blank slate. This cannot be undone.</p>
+      <p class="reset-warning" id="reset-warning" hidden>This device has not downloaded a report yet. Resetting now will permanently lose the current Test History and Change Log.</p>
+      <label class="reset-confirm-label" for="reset-confirm-input">Type RESET to confirm</label>
+      <input class="reset-confirm-input" id="reset-confirm-input" type="text" autocomplete="off" spellcheck="false">
+      <div class="modal-actions">
+        <button class="btn" id="reset-cancel" type="button">Cancel</button>
+        <button class="btn btn--danger" id="reset-confirm" type="button" disabled>Reset</button>
       </div>
     </div>
   </div>

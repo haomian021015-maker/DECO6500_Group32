@@ -14,16 +14,26 @@ const TIMER_SECONDS = 180;
 // How long the result dialog stays up before returning home, in seconds.
 const RETURN_DELAY_SECONDS = 6;
 
-// The reference date printed on every scenario card, so participants can read
+// The default reference date printed on scenario cards, so participants can read
 // the printed best-before / use-by dates against a fixed "today".
 const TODAY_DATE = "05/09/2026";
 
 // The Phase B app card shows product details. This is a simulation, not a real
 // stock system, so every card carries the same placeholder values.
-const CARD_INFO = {
-  productName: "Milk",
-  shelfCategory: "1-2-C",
-  labelDate: "05/09/2026"
+// const CARD_INFO = {
+//   productName: "Milk",
+//   shelfCategory: "1-2-C",
+//   labelDate: "05/09/2026"
+// };
+const PHASE_B_CARDS = {
+  1: { productName: "Cheese",           shelfCategory: "1-3-D", labelDate: "29/10/2026" },
+  2: { productName: "Salad",            shelfCategory: "2-5-W", labelDate: "08/09/2026" },
+  3: { productName: "Kipling",          shelfCategory: "4-2-V", labelDate: "28/09/2026" },
+  4: { productName: "Protein Smoothie", shelfCategory: "4-5-G", labelDate: "22/12/2026" },
+  5: { productName: "Fruit",            shelfCategory: "2-2-R", labelDate: "11/09/2026" },
+  6: { productName: "Fast food",        shelfCategory: "2-2-G", labelDate: "20/09/2026" },
+  7: { productName: "Bread",            shelfCategory: "1-2-C", labelDate: "05/09/2026" },
+  8: { productName: "Primo",            shelfCategory: "1-2-C", labelDate: "29/09/2026" }
 };
 
 // Where the photo folders live. The tree came straight from the group's shared
@@ -86,6 +96,22 @@ Object.keys(PRODUCTS_BY_PHASE).forEach(function (phase) {
   PRODUCTS_BY_PHASE[phase].forEach(function (product, index) {
     product.phase = phase;
     product.cardNumber = index + 1;
+    product.todayDate = TODAY_DATE;
+    if (phase === "A" && product.cardNumber === 1) product.todayDate = "18/10/2026";
+    if (phase === "A" && product.cardNumber === 2) product.todayDate = "10/9/2026";
+    if (phase === "A" && product.cardNumber === 3) product.todayDate = "07/09/2026";
+    if (phase === "A" && product.cardNumber === 4) product.todayDate = "20/12/2026";
+    if (phase === "A" && product.cardNumber === 5) product.todayDate = "14/09/2026";
+    if (phase === "A" && product.cardNumber === 6) product.todayDate = "08/09/2026";
+    if (phase === "A" && product.cardNumber === 7) product.todayDate = "12/09/2026";
+    if (phase === "A" && product.cardNumber === 8) product.todayDate = "06/08/2026";
+    if (phase === "B") {
+      const cardInfo = PHASE_B_CARDS[product.cardNumber];
+      product.productName = cardInfo.productName;
+      product.shelfCategory = cardInfo.shelfCategory;
+      product.labelDate = cardInfo.labelDate;
+      product.todayDate = cardInfo.labelDate;
+    }
     product.name = "Scenario Card " + product.cardNumber;
   });
 });
@@ -103,22 +129,57 @@ function phasePage(phase) {
   return phase === "B" ? "phase-b.html" : "phase-a.html";
 }
 
-// The correct classification for a product:
-//   every "use by" item is discarded, without exception;
-//   a "best before" item is stored unless the food itself is damaged.
-// This is both the answer a run is marked against and the suggestion the
-// Phase B app card shows.
+// Researcher-confirmed answers for Phase A, indexed by Scenario Card number.
+const PHASE_A_ANSWERS = {
+  1: "store",
+  2: "discard",
+  3: "store",
+  4: "discard",
+  5: "store",
+  6: "discard",
+  7: "discard",
+  8: "discard"
+};
+
+const PHASE_B_ANSWERS = {
+  1: "store",
+  2: "discard",
+  3: "store",
+  4: "discard",
+  5: "store",
+  6: "discard",
+  7: "discard",
+  8: "discard"
+};
+
+// What the Phase B app suggests to the participant. Kept separate from
+// PHASE_B_ANSWERS (the grading answer key) so the two can be made to differ —
+// e.g. a deliberately wrong suggestion, to see whether participants catch it.
+// Defaults to matching the answer key.
+const PHASE_B_SUGGESTIONS = {
+  1: "store",
+  2: "discard",
+  3: "store",
+  4: "discard",
+  5: "store",
+  6: "discard",
+  7: "store",
+  8: "discard"
+};
+
 function correctChoice(product) {
-  if (product.labelType === "use by") return "discard";
-  return product.damaged ? "discard" : "store";
+  if (product.phase === "A") return PHASE_A_ANSWERS[product.cardNumber];
+  return PHASE_B_ANSWERS[product.cardNumber];
 }
 
 function suggestionFor(product) {
-  return correctChoice(product);
+  // Phase A has no suggestion card.
+  if (product.phase === "A") return null;
+  return PHASE_B_SUGGESTIONS[product.cardNumber];
 }
 
 function zoneName(choice) {
-  return choice === "store" ? "Store" : "Discard";
+  return choice === "store" ? "Food Rescue" : "Discard";
 }
 
 /* ----------------------------------------------------------
@@ -128,6 +189,102 @@ function zoneName(choice) {
    than in a variable.
    ---------------------------------------------------------- */
 
+// Keep the staff-assigned ID across phases in the same browser tab.
+const Participant = {
+  KEY: "deco6500_participant_id",
+  load: function () {
+    try {
+      return sessionStorage.getItem(this.KEY) || "";
+    } catch (e) {
+      return "";
+    }
+  },
+  save: function (id) {
+    try {
+      sessionStorage.setItem(this.KEY, id.trim());
+      return true;
+    } catch (e) {
+      return false;
+    }
+  },
+  clear: function () {
+    try {
+      sessionStorage.removeItem(this.KEY);
+    } catch (e) {
+      // nothing to do
+    }
+  }
+};
+
+// Keeps the three "before you can start" confirmations (Participant Information
+// Sheet, Consent Form, understanding) for the length of this browser tab, so
+// moving from Phase A to Phase B does not ask the same participant to confirm
+// them again. Cleared when the tab closes, same as the participant ID, so the
+// next participant on this computer still has to confirm for themselves.
+const ConsentState = {
+  KEY: "deco6500_consent_state",
+  blank: function () {
+    return { information: false, consent: false, acknowledged: false };
+  },
+  load: function () {
+    try {
+      return Object.assign(this.blank(), JSON.parse(sessionStorage.getItem(this.KEY)) || {});
+    } catch (e) {
+      return this.blank();
+    }
+  },
+  save: function (state) {
+    try {
+      sessionStorage.setItem(this.KEY, JSON.stringify(state));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  },
+  clear: function () {
+    try {
+      sessionStorage.removeItem(this.KEY);
+    } catch (e) {
+      // nothing to do
+    }
+  }
+};
+
+// Marks Phase A / Phase B as run for this participant (this browser tab), so
+// each phase can only be run once and the report can only be downloaded once
+// both are finished. Cleared when the tab closes, same as ConsentState — the
+// next participant on this computer gets a fresh Phase A and Phase B.
+const PhaseCompletion = {
+  KEY: "deco6500_phase_completion",
+  blank: function () {
+    return { A: false, B: false };
+  },
+  load: function () {
+    try {
+      return Object.assign(this.blank(), JSON.parse(sessionStorage.getItem(this.KEY)) || {});
+    } catch (e) {
+      return this.blank();
+    }
+  },
+  markDone: function (phase) {
+    try {
+      const state = this.load();
+      state[phase] = true;
+      sessionStorage.setItem(this.KEY, JSON.stringify(state));
+      return state;
+    } catch (e) {
+      return this.load();
+    }
+  },
+  clear: function () {
+    try {
+      sessionStorage.removeItem(this.KEY);
+    } catch (e) {
+      // nothing to do
+    }
+  }
+};
+
 const Session = {
   KEY: "deco6500_run",
 
@@ -135,6 +292,12 @@ const Session = {
   blank: function (phase) {
     return {
       phase: phase,
+      participantId: Participant.load(),
+      cardTimesMs: {},    // retained for compatibility with earlier results
+      cardVisits: [],     // one entry per visit, in opening order
+      changeEvents: [],   // all selections and suggestion changes, in order
+      actionHistoryVersion: 2,
+      activeCard: null,   // persisted visit, so refreshes do not lose time
       startedAt: null,   // epoch ms, set by the Start button
       endsAt: null,      // epoch ms, when the countdown hits zero
       decisions: {},     // productId -> "store" | "discard"
@@ -191,14 +354,27 @@ const Session = {
     }
   },
 
-  // Seconds left, or 0 once the countdown has run out.
+  // Seconds left, or 0 once the countdown has run out. Used for the
+  // on-screen timer before the limit and for per-card timing stats.
   remaining: function (state) {
     if (!state || !state.endsAt) return TIMER_SECONDS;
     return Math.max(0, Math.ceil((state.endsAt - Date.now()) / 1000));
   },
 
+  // Seconds past the 3-minute limit, or 0 if still within it. The task is
+  // not cut off at the limit any more — this only drives the "time's up"
+  // display (an accumulating counter plus a banner), never blocks input.
+  overtimeSeconds: function (state) {
+    if (!state || !state.endsAt) return 0;
+    return Math.max(0, Math.ceil((Date.now() - state.endsAt) / 1000));
+  },
+
+  // A run counts as "running" from Start until the participant explicitly
+  // ends it (End the Timing) — running past the 3-minute mark no longer
+  // locks the task, it only shows a non-blocking "time's up" notice. The
+  // 3-minute limit is still recorded in each result via withinTimeLimit.
   isRunning: function (state) {
-    return !!(state && state.startedAt && Session.remaining(state) > 0);
+    return !!(state && state.startedAt);
   }
 };
 
@@ -208,7 +384,71 @@ const Session = {
    read them back out of the browser afterwards.
    ---------------------------------------------------------- */
 
+// Track elapsed viewing time, including close-ups and feedback, capped at timeout.
+const CardTiming = {
+  start: function (state, productId, now) {
+    now = now == null ? Date.now() : now;
+    this.stop(state, now);
+    if (!state.startedAt || now >= state.endsAt) return;
+    state.cardTimesMs = state.cardTimesMs || {};
+    if (state.cardTimesMs[productId] == null) state.cardTimesMs[productId] = 0;
+    state.cardVisits = state.cardVisits || [];
+    const visitNumber = state.cardVisits.filter(function (visit) {
+      return visit.productId === productId;
+    }).length + 1;
+    state.cardVisits.push({
+      productId: productId,
+      cardNumber: getProduct(state.phase, productId).cardNumber,
+      visitNumber: visitNumber,
+      openedAt: now,
+      durationMs: 0
+    });
+    state.activeCard = { productId: productId, openedAt: now, visitIndex: state.cardVisits.length - 1 };
+  },
+  stop: function (state, now) {
+    if (!state || !state.activeCard) return;
+    now = now == null ? Date.now() : now;
+    const visit = state.activeCard;
+    const elapsed = Math.max(0, Math.min(now, state.endsAt) - visit.openedAt);
+    state.cardTimesMs = state.cardTimesMs || {};
+    state.cardTimesMs[visit.productId] = (state.cardTimesMs[visit.productId] || 0) + elapsed;
+    if (state.cardVisits && state.cardVisits[visit.visitIndex]) {
+      state.cardVisits[visit.visitIndex].durationMs = elapsed;
+    }
+    state.activeCard = null;
+  }
+};
+
+// Older results already contain decision logs and feedback, so their changes
+// can be reconstructed without rewriting stored history.
+function getCardChanges(run) {
+  if (run.actionHistoryVersion === 2 && Array.isArray(run.changeEvents)) return run.changeEvents.slice();
+  const events = [];
+  function collect(entries, kind) {
+    (entries || []).forEach(function (entry) {
+      if (!["store", "discard"].includes(entry.to)) return;
+      const product = getProduct(run.phase, entry.productId);
+      events.push(Object.assign({}, entry, {
+        kind: kind,
+        cardNumber: entry.cardNumber || (product && product.cardNumber) || entry.productId
+      }));
+    });
+  }
+  collect(run.log, "decision");
+  collect(run.feedback, "suggestion");
+  return events.sort(function (a, b) { return (a.atSecond || 0) - (b.atSecond || 0); });
+}
+
+function recordCardChange(state, entry) {
+  if (state.actionHistoryVersion !== 2 || !Array.isArray(state.changeEvents)) {
+    state.changeEvents = getCardChanges(state);
+    state.actionHistoryVersion = 2;
+  }
+  state.changeEvents.push(entry);
+}
+
 function saveRunResult(state, outcome) {
+  CardTiming.stop(state);
   const products = getProducts(state.phase);
   const endedAt = Date.now();
   const totalSeconds = state.startedAt
@@ -231,19 +471,33 @@ function saveRunResult(state, outcome) {
     if (decision !== correctChoice(product)) incorrect.push(product.cardNumber);
   });
 
-  // Phase B: the cards where the participant overrode the app's suggestion.
-  const changedIds = [];
-  state.feedback.forEach(function (entry) {
-    if (changedIds.indexOf(entry.productId) === -1) changedIds.push(entry.productId);
+  const changeEvents = getCardChanges(state);
+  const actualChanges = changeEvents.filter(function (entry) {
+    return entry.from != null && entry.from !== entry.to;
   });
-  const changedCards = changedIds.map(function (id) {
-    const product = getProduct(state.phase, id);
-    return product ? product.cardNumber : id;
-  }).sort(function (a, b) { return a - b; });
+  const changedCards = Array.from(new Set(actualChanges.map(function (entry) {
+    return entry.cardNumber;
+  }))).sort(function (a, b) { return a - b; });
+
+  const cardTimesSeconds = {};
+  products.forEach(function (product) {
+    const ms = state.cardTimesMs && state.cardTimesMs[product.id];
+    cardTimesSeconds[product.cardNumber] = ms == null ? null : Math.round(ms / 100) / 10;
+  });
 
   const result = {
+    cardTimesSeconds: cardTimesSeconds,
+    cardVisits: state.cardVisits ? state.cardVisits.map(function (visit) {
+      return {
+        cardNumber: visit.cardNumber,
+        visitNumber: visit.visitNumber,
+        openedAt: new Date(visit.openedAt).toISOString(),
+        seconds: Math.round(visit.durationMs / 100) / 10
+      };
+    }) : null,
+    participantId: state.participantId || "",
     phase: state.phase,
-    outcome: outcome,                       // "completed" | "timeout"
+    outcome: outcome,                       // "completed" (older records may say "timeout")
     startedAt: state.startedAt ? new Date(state.startedAt).toISOString() : null,
     endedAt: new Date(endedAt).toISOString(),
     totalSeconds: totalSeconds,
@@ -252,10 +506,14 @@ function saveRunResult(state, outcome) {
     completedCards: products.length - notCompleted.length,
     notCompletedCards: notCompleted,
     incorrectCards: incorrect,
-    changedCards: changedCards,             // Phase B only
+    changedCards: changedCards,
+    changeEvents: changeEvents,
+    actionHistoryVersion: 2,
+    actionCount: changeEvents.length,
+    changeCount: actualChanges.length,
     store: store,
     discard: discard,
-    reclassifications: state.log.filter(function (e) { return e.from !== null; }).length,
+    reclassifications: changeEvents.filter(function (e) { return e.kind === "decision" && e.from != null; }).length,
     decisions: Object.assign({}, state.decisions),
     log: state.log.slice(),
     feedback: state.feedback.slice()
@@ -269,6 +527,10 @@ function saveRunResult(state, outcome) {
   } catch (e) {
     // Private browsing or file:// restrictions — the on-screen summary still works.
   }
+
+  // Whether the run finished within time or timed out, that is this
+  // participant's one attempt at this phase — mark it used.
+  PhaseCompletion.markDone(state.phase);
 
   return result;
 }
@@ -334,6 +596,35 @@ const ChangeLog = {
     }
   },
 
+  clear: function () {
+    try {
+      localStorage.removeItem(this.KEY);
+    } catch (e) {
+      // nothing to do
+    }
+  }
+};
+
+// Whether the Test History / Change Log currently sitting in localStorage on
+// this device has been downloaded yet. Cleared together with that data by
+// "Reset for Next Participant", so it only ever reflects the data that is
+// actually still on the device right now.
+const ReportExportState = {
+  KEY: "deco6500_report_exported",
+  wasExported: function () {
+    try {
+      return localStorage.getItem(this.KEY) === "1";
+    } catch (e) {
+      return false;
+    }
+  },
+  markExported: function () {
+    try {
+      localStorage.setItem(this.KEY, "1");
+    } catch (e) {
+      // nothing to do — the export itself still succeeded
+    }
+  },
   clear: function () {
     try {
       localStorage.removeItem(this.KEY);

@@ -55,6 +55,61 @@ body {
 
 /* ---------- Instruction blocks ---------- */
 
+.study-documents {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 340px));
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.study-document {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.study-document h2 {
+  margin: 0 0 12px;
+  font-size: 19px;
+}
+
+.study-document p {
+  margin: 0 0 20px;
+}
+
+.study-document .btn {
+  max-width: 100%;
+  white-space: normal;
+  /* Anchors the button to the card's bottom edge regardless of how many
+     lines the description above it wraps to, so both cards' buttons line
+     up at the same height. */
+  margin-top: auto;
+}
+
+.study-document--completed {
+  background: #e8e8e8;
+  color: #626262;
+  border-color: #bdbdbd;
+}
+
+.study-document--completed .btn:disabled {
+  background: #d0d0d0;
+  color: #555;
+  border-color: #b0b0b0;
+  opacity: 1;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
+
+#study-next-steps[hidden] {
+  display: none;
+}
+
 .instructions {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -66,6 +121,38 @@ body {
 .instructions h2 {
   margin: 0 0 12px;
   font-size: 19px;
+}
+
+.participant-entry label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.participant-entry .participant-note {
+  margin: -4px 0 10px;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--ink-faint);
+}
+
+.participant-entry input {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font: inherit;
+}
+
+.participant-entry input:focus-visible {
+  outline: 2px solid var(--accent-a);
+  outline-offset: 2px;
+}
+
+.participant-entry #participant-status {
+  margin-top: 10px;
+  font-size: 14px;
 }
 
 .instructions h3 {
@@ -97,6 +184,11 @@ body {
 
 .instructions li:last-child {
   margin-bottom: 0;
+}
+
+.instructions .feedback-instruction,
+.instructions .feedback-instruction .ui-label {
+  color: #c45500;
 }
 
 /* The two sorting destinations, described as a small definition list */
@@ -143,6 +235,22 @@ kbd,
 }
 
 /* ---------- Phase buttons ---------- */
+
+.instructions-acknowledgement {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.instructions-acknowledgement .acknowledgement-status {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.instructions-acknowledgement .btn {
+  white-space: normal;
+  max-width: 100%;
+}
 
 .phase-choice {
   display: grid;
@@ -200,6 +308,15 @@ kbd,
 .phase-btn--b:hover,
 .phase-btn--b:focus-visible {
   border-color: var(--accent-b);
+}
+
+.phase-btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: var(--surface-muted);
+  border-color: var(--line);
+  transform: none;
+  box-shadow: none;
 }
 
 .page-footer {
