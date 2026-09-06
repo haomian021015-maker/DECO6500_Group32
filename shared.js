@@ -389,7 +389,9 @@ const CardTiming = {
   start: function (state, productId, now) {
     now = now == null ? Date.now() : now;
     this.stop(state, now);
-    if (!state.startedAt || now >= state.endsAt) return;
+    // The 3-minute limit no longer cuts the task off, so a card opened after
+    // it still gets timed normally — only "not started yet" skips timing.
+    if (!state.startedAt) return;
     state.cardTimesMs = state.cardTimesMs || {};
     if (state.cardTimesMs[productId] == null) state.cardTimesMs[productId] = 0;
     state.cardVisits = state.cardVisits || [];
@@ -409,7 +411,7 @@ const CardTiming = {
     if (!state || !state.activeCard) return;
     now = now == null ? Date.now() : now;
     const visit = state.activeCard;
-    const elapsed = Math.max(0, Math.min(now, state.endsAt) - visit.openedAt);
+    const elapsed = Math.max(0, now - visit.openedAt);
     state.cardTimesMs = state.cardTimesMs || {};
     state.cardTimesMs[visit.productId] = (state.cardTimesMs[visit.productId] || 0) + elapsed;
     if (state.cardVisits && state.cardVisits[visit.visitIndex]) {
