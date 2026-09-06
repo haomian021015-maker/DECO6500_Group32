@@ -12,6 +12,13 @@
 const PHASE = document.body.dataset.phase;
 const PRODUCTS = getProducts(PHASE);
 
+// Each phase can only be run once per participant. A completed phase sends
+// the participant straight back home instead of letting them start again
+// (including a direct visit to this URL, not just the home page link).
+if (PhaseCompletion.load()[PHASE]) {
+  window.location.replace("index.html");
+}
+
 const el = {
   timer: document.getElementById("timer"),
   startBtn: document.getElementById("start-btn"),
@@ -23,10 +30,7 @@ const el = {
   storeCount: document.getElementById("store-count"),
   discardCount: document.getElementById("discard-count"),
 
-  failOverlay: document.getElementById("fail-overlay"),
-  failSummary: document.getElementById("fail-summary"),
-  failHome: document.getElementById("fail-home"),
-  failRetry: document.getElementById("fail-retry"),
+  overtimeBanner: document.getElementById("overtime-banner"),
 
   resultOverlay: document.getElementById("result-overlay"),
   resultSummary: document.getElementById("result-summary"),
@@ -47,6 +51,13 @@ if (!state || state.phase !== PHASE) {
   state = Session.blank(PHASE);
   Session.save(state);
 }
+
+// Settle a visit if a previous page could not deliver its pagehide event.
+CardTiming.stop(state);
+Session.save(state);
+window.addEventListener("pageshow", function (event) {
+  if (event.persisted) window.location.reload();
+});
 
 let finished = false;   // this visit has already settled the run
 let tickId = null;
@@ -145,11 +156,22 @@ function updateStatus() {
    ---------------------------------------------------------- */
 
 function paintTimer() {
-  const remaining = state.startedAt ? Session.remaining(state) : TIMER_SECONDS;
   const running = Session.isRunning(state);
-  el.timer.textContent = formatTime(remaining);
-  el.timer.classList.toggle("timer--running", running && remaining > 30);
-  el.timer.classList.toggle("timer--warning", running && remaining <= 30);
+  const overtime = state.startedAt ? Session.overtimeSeconds(state) : 0;
+
+  if (overtime > 0) {
+    el.timer.textContent = "+" + formatTime(overtime);
+  } else {
+    const remaining = state.startedAt ? Session.remaining(state) : TIMER_SECONDS;
+    el.timer.textContent = formatTime(remaining);
+  }
+  el.timer.classList.toggle("timer--running", running && overtime === 0 && Session.remaining(state) > 30);
+  el.timer.classList.toggle("timer--warning", running && overtime === 0 && Session.remaining(state) <= 30 && !!state.startedAt);
+  el.timer.classList.toggle("timer--overtime", overtime > 0);
+
+  // The 3-minute limit no longer stops the task — it only shows this
+  // non-blocking notice so the participant knows to wrap up.
+  el.overtimeBanner.hidden = !(running && overtime > 0);
 }
 
 function startTask() {
@@ -168,10 +190,7 @@ function startTask() {
 
 function startTicking() {
   stopTicking();
-  tickId = setInterval(function () {
-    paintTimer();
-    if (state.startedAt && Session.remaining(state) <= 0) timeUp();
-  }, 250);
+  tickId = setInterval(paintTimer, 250);
 }
 
 function stopTicking() {
@@ -179,23 +198,6 @@ function stopTicking() {
     clearInterval(tickId);
     tickId = null;
   }
-}
-
-function timeUp() {
-  if (finished) return;
-  finished = true;
-  stopTicking();
-  paintTimer();
-  closeOverlay(el.confirmOverlay);
-  el.endBtn.disabled = true;
-  el.startBtn.disabled = true;
-  el.status.textContent = "Time is up.";
-
-  const result = saveRunResult(state, "timeout");
-  Session.clear();
-  render();
-  renderSummary(el.failSummary, result);
-  openOverlay(el.failOverlay);
 }
 
 /* ----------------------------------------------------------
@@ -244,9 +246,9 @@ function renderSummary(container, result) {
     ["Cards not completed", listCards(result.notCompletedCards)],
     ["Incorrect cards", listCards(result.incorrectCards)]
   ];
-  if (PHASE === "B") {
-    rows.push(["Cards changed", listCards(result.changedCards)]);
-  }
+  rows.push(["Cards changed", listCards(result.changedCards)]);
+  rows.push(["Number of changes", String(result.changeCount)]);
+  rows.push(["Recorded actions", String(result.actionCount)]);
 
   container.innerHTML = "";
   rows.forEach(function (row) {
@@ -293,11 +295,6 @@ el.endBtn.addEventListener("click", requestEnd);
 el.confirmYes.addEventListener("click", finishTask);
 el.confirmNo.addEventListener("click", function () { closeOverlay(el.confirmOverlay); });
 
-el.failHome.addEventListener("click", goHome);
-el.failRetry.addEventListener("click", function () {
-  Session.clear();
-  window.location.reload();
-});
 el.resultHome.addEventListener("click", goHome);
 
 document.addEventListener("keydown", function (event) {
@@ -312,13 +309,9 @@ document.addEventListener("keydown", function (event) {
 paintTimer();
 render();
 
-if (state.startedAt && Session.remaining(state) <= 0) {
-  timeUp();
-} else {
-  if (Session.isRunning(state)) {
-    el.startBtn.disabled = true;
-    el.startBtn.textContent = "Running";
-    el.endBtn.disabled = false;
-  }
-  startTicking();
+if (Session.isRunning(state)) {
+  el.startBtn.disabled = true;
+  el.startBtn.textContent = "Running";
+  el.endBtn.disabled = false;
 }
+startTicking();

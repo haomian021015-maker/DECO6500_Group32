@@ -42,6 +42,16 @@
   color: #a3341f;
 }
 
+.timer--overtime {
+  color: #a3341f;
+  animation: overtime-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes overtime-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
 .timer-label {
   font-size: 15px;
   color: var(--ink-faint);
@@ -84,6 +94,17 @@
 
 .btn--primary:hover:not(:disabled) {
   background: var(--accent-a-dark);
+}
+
+.btn--danger {
+  background: #fdeceb;
+  border-color: #a3341f;
+  color: #7a1f0e;
+}
+
+.btn--danger:hover:not(:disabled) {
+  background: #a3341f;
+  color: #fff;
 }
 
 .btn--store {
@@ -250,6 +271,77 @@
   font-size: 14.5px;
   color: var(--ink-faint);
   min-height: 1.4em;
+}
+
+/* Non-blocking overtime notice: obvious, but the task stays fully usable. */
+.overtime-banner {
+  margin: -8px 0 20px;
+  padding: 10px 16px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #7a1f0e;
+  background: #fdeceb;
+  border: 1px solid #a3341f;
+  border-radius: 8px;
+}
+
+/* ---------- Reset for Next Participant ---------- */
+.reset-warning {
+  font-weight: 700;
+  color: #7a1f0e;
+  background: #fdeceb;
+  border: 1px solid #a3341f;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.reset-confirm-label {
+  display: block;
+  margin: 16px 0 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.reset-confirm-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font: inherit;
+}
+
+/* Extra breathing room for this particular modal — it packs a warning, a
+   label and an input in on top of the usual title/body/actions, so the
+   shared .modal spacing reads as too tight here. */
+.modal--reset {
+  padding: 32px 32px 28px;
+}
+
+.modal--reset h2 {
+  margin-bottom: 16px;
+}
+
+.modal--reset > p {
+  margin-bottom: 22px;
+  line-height: 1.55;
+}
+
+.modal--reset .reset-warning {
+  margin-bottom: 22px;
+}
+
+.modal--reset .reset-confirm-label {
+  margin: 0 0 10px;
+}
+
+.modal--reset .reset-confirm-input {
+  margin-bottom: 26px;
+}
+
+.modal--reset .modal-actions {
+  gap: 16px;
 }
 
 /* ---------- Modal ---------- */
@@ -594,6 +686,18 @@ body.no-scroll {
   margin: 0;
 }
 
+.app-info dt.label-best-before,
+.app-info dd.label-best-before {
+  color: var(--accent-a-dark);
+  font-weight: 700;
+}
+
+.app-info dt.label-used-by,
+.app-info dd.label-used-by {
+  color: #a3341f;
+  font-weight: 700;
+}
+
 .app-suggestion {
   margin: 0 0 4px;
   font-size: 17px;
@@ -602,7 +706,17 @@ body.no-scroll {
 }
 
 .app-suggestion strong {
-  font-size: 19px;
+  font-size: 26px;
+}
+
+.app-suggestion strong.suggestion-store,
+.feedback-hint strong.suggestion-store {
+  color: var(--accent-a-dark);
+}
+
+.app-suggestion strong.suggestion-discard,
+.feedback-hint strong.suggestion-discard {
+  color: #a3341f;
 }
 
 .app-suggestion-note {
@@ -718,6 +832,18 @@ body.no-scroll {
   margin-top: 26px;
 }
 
+.export-status {
+  margin: 8px 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+.phase-hint--done {
+  font-weight: 600;
+  color: var(--accent-a-dark);
+}
+
 .modal--wide {
   max-width: 560px;
   text-align: left;
@@ -827,6 +953,12 @@ body.no-scroll {
 .history-table td {
   padding: 8px 12px;
   border-top: 1px solid #e2e2e2;
+}
+
+.history-table td.history-card-visits {
+  white-space: pre-line;
+  min-width: 260px;
+  line-height: 1.6;
 }
 
 .history-table tr:nth-child(even) td {

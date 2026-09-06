@@ -18,13 +18,12 @@
     <!-- ================= Phase A: photo with close-up circles ================= -->
     <div id="view-a" hidden>
       <p class="product-intro">
-        These buttons you can press.<br>
-        Please follow our instructions to decide whether to store or discard.
+        Click buttons 1–4 to view clues about the food in this scenario.
       </p>
 
       <section class="scenario-card">
         <h1 class="scenario-title" id="card-title-a">Scenario Card</h1>
-        <p class="scenario-date">today: <span class="today-date"></span></p>
+        <p class="scenario-date">Today:&nbsp;<span class="today-date"></span></p>
 
         <div class="product-figure" id="product-figure">
           <img class="product-photo" id="main-photo-a" alt="">
@@ -35,7 +34,7 @@
         </div>
 
         <div class="decision-actions">
-          <button class="btn btn--store btn--decision" id="store-btn" type="button">Store</button>
+          <button class="btn btn--store btn--decision" id="store-btn" type="button">Food Rescue</button>
           <button class="btn btn--discard btn--decision" id="discard-btn" type="button">Discard</button>
         </div>
 
@@ -47,7 +46,6 @@
     <div id="view-b" hidden>
       <section class="scenario-card scenario-card--b">
         <h1 class="scenario-title" id="card-title-b">Scenario Card</h1>
-        <h2 class="app-heading">Official photo of the app</h2>
 
         <div class="app-layout">
           <!-- the app screenshot -->
@@ -59,13 +57,13 @@
             <dl class="app-info">
               <div><dt>Product name:</dt><dd id="info-name"></dd></div>
               <div><dt>Shelf category:</dt><dd id="info-shelf"></dd></div>
-              <div><dt>Before/used:</dt><dd id="info-label-date"></dd></div>
+              <div><dt id="info-label-type">Before/used:</dt><dd id="info-label-date"></dd></div>
               <div><dt>Today's date:</dt><dd class="today-date"></dd></div>
             </dl>
 
             <p class="app-suggestion">
               Suggested classification:<br>
-              <strong id="suggestion-value">Store</strong>
+              <strong id="suggestion-value">Food Rescue</strong>
             </p>
             <p class="app-suggestion-note" id="suggestion-note" hidden>
               Changed from your feedback.
@@ -102,7 +100,7 @@
       </label>
       <textarea id="feedback-text" rows="5" placeholder="typing..."></textarea>
       <p class="feedback-hint" id="feedback-hint">
-        The suggestion will change to <strong id="feedback-target">Store</strong>.
+        This item will be classified as <strong id="feedback-target">Food Rescue</strong>.
       </p>
 
       <button class="btn btn--dark btn--wide" id="feedback-submit" type="button">Change</button>
