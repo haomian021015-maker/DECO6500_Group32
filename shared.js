@@ -96,6 +96,12 @@ Object.keys(PRODUCTS_BY_PHASE).forEach(function (phase) {
   PRODUCTS_BY_PHASE[phase].forEach(function (product, index) {
     product.phase = phase;
     product.cardNumber = index + 1;
+    // The id ends up in the URL (product.html?phase=...&id=...), so it must
+    // not hint at the answer the way the original folder name does (e.g.
+    // "phase1-best before-1" gives away the label type before the card is
+    // even opened). The actual photo path (product.image / product.details,
+    // built from the folder name above) is untouched — only this id changes.
+    product.id = phase + "-" + product.cardNumber;
     product.todayDate = TODAY_DATE;
     if (phase === "A" && product.cardNumber === 1) product.todayDate = "18/10/2026";
     if (phase === "A" && product.cardNumber === 2) product.todayDate = "10/9/2026";
